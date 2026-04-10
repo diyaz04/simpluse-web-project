@@ -1,0 +1,204 @@
+import { useState, useEffect } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "../firebase";
+import { useApp } from "../AppContext";
+import { motion } from "motion/react";
+import { Save, LogOut, Plus, Trash2 } from "lucide-react";
+import { auth } from "../firebase";
+
+export default function Dashboard() {
+  const { content } = useApp();
+  const [formData, setFormData] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (content) {
+      setFormData(content);
+    }
+  }, [content]);
+
+  if (!formData) return <div className="p-20 text-center">Loading...</div>;
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await setDoc(doc(db, "content", "landing"), formData);
+      alert("Perubahan berhasil disimpan!");
+    } catch (err) {
+      handleFirestoreError(err, OperationType.WRITE, "content/landing");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateHero = (field: string, value: string) => {
+    setFormData({ ...formData, hero: { ...formData.hero, [field]: value } });
+  };
+
+  const updateAbout = (field: string, value: string) => {
+    setFormData({ ...formData, about: { ...formData.about, [field]: value } });
+  };
+
+  const updatePortfolio = (index: number, field: string, value: any) => {
+    const newPortfolio = [...formData.portfolio];
+    newPortfolio[index] = { ...newPortfolio[index], [field]: value };
+    setFormData({ ...formData, portfolio: newPortfolio });
+  };
+
+  const addPortfolio = () => {
+    setFormData({
+      ...formData,
+      portfolio: [
+        ...formData.portfolio,
+        { title: "New Project", description: "", tech: [], link: "", image: "https://picsum.photos/seed/new/800/600" }
+      ]
+    });
+  };
+
+  const removePortfolio = (index: number) => {
+    const newPortfolio = formData.portfolio.filter((_: any, i: number) => i !== index);
+    setFormData({ ...formData, portfolio: newPortfolio });
+  };
+
+  return (
+    <div className="min-h-screen bg-bg-dark p-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-12">
+          <h1 className="text-4xl font-display font-bold">Admin <span className="gradient-text">Dashboard</span></h1>
+          <div className="flex gap-4">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 gradient-bg px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              <Save className="w-5 h-5" />
+              {saving ? "Saving..." : "Simpan Perubahan"}
+            </button>
+            <button
+              onClick={() => auth.signOut()}
+              className="flex items-center gap-2 glass px-6 py-3 rounded-xl font-bold hover:bg-white/10 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-12 pb-20">
+          {/* Hero Section */}
+          <section className="glass p-8 rounded-3xl border border-white/10">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <span className="w-2 h-8 gradient-bg rounded-full" />
+              Hero Section
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm text-text-secondary mb-2">Title</label>
+                <input
+                  type="text"
+                  value={formData.hero.title}
+                  onChange={(e) => updateHero("title", e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-brand-orange outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-text-secondary mb-2">Subtitle</label>
+                <textarea
+                  value={formData.hero.subtitle}
+                  onChange={(e) => updateHero("subtitle", e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-brand-orange outline-none h-32"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* About Section */}
+          <section className="glass p-8 rounded-3xl border border-white/10">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <span className="w-2 h-8 gradient-bg rounded-full" />
+              About Section
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm text-text-secondary mb-2">Title</label>
+                <input
+                  type="text"
+                  value={formData.about.title}
+                  onChange={(e) => updateAbout("title", e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-brand-orange outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-text-secondary mb-2">Description</label>
+                <textarea
+                  value={formData.about.description}
+                  onChange={(e) => updateAbout("description", e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-brand-orange outline-none h-32"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Portfolio Section */}
+          <section className="glass p-8 rounded-3xl border border-white/10">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <span className="w-2 h-8 gradient-bg rounded-full" />
+                Portfolio Section
+              </h2>
+              <button
+                onClick={addPortfolio}
+                className="flex items-center gap-2 text-brand-orange font-bold hover:underline"
+              >
+                <Plus className="w-5 h-5" /> Tambah Project
+              </button>
+            </div>
+            
+            <div className="grid gap-8">
+              {formData.portfolio.map((project: any, i: number) => (
+                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 relative group">
+                  <button
+                    onClick={() => removePortfolio(i)}
+                    className="absolute top-4 right-4 p-2 text-brand-red opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-text-secondary mb-1">Project Title</label>
+                        <input
+                          type="text"
+                          value={project.title}
+                          onChange={(e) => updatePortfolio(i, "title", e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:border-brand-orange outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-text-secondary mb-1">Link</label>
+                        <input
+                          type="text"
+                          value={project.link}
+                          onChange={(e) => updatePortfolio(i, "link", e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:border-brand-orange outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-text-secondary mb-1">Description</label>
+                      <textarea
+                        value={project.description}
+                        onChange={(e) => updatePortfolio(i, "description", e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:border-brand-orange outline-none h-32"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
