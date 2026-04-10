@@ -1,10 +1,13 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApp, getApps } from "firebase/app";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import firebaseConfig from "../firebase-applet-config.json";
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
+// Set persistence to local to help with session stability
+setPersistence(auth, browserLocalPersistence).catch(console.error);
+
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 export enum OperationType {

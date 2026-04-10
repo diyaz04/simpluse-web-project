@@ -69,8 +69,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-white/5 text-center text-text-secondary text-sm">
+        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-text-secondary text-sm">
           <p>© {new Date().getFullYear()} Simpluse Web Project. All rights reserved.</p>
+          <a href="?admin=true" className="hover:text-brand-orange transition-colors opacity-50 hover:opacity-100">Login Admin</a>
         </div>
       </div>
     </footer>

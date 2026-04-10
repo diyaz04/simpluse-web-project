@@ -19,7 +19,9 @@ import { AppProvider, useApp } from "./AppContext";
 
 function MainContent() {
   const { user, loading } = useApp();
-  const isLoginPage = window.location.pathname === "/login";
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdminParam = urlParams.get('admin') === 'true';
+  const isLoginPage = window.location.pathname === "/login" || isAdminParam;
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
