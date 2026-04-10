@@ -55,7 +55,7 @@ export default function Footer() {
             <ul className="space-y-4 text-text-secondary">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-brand-orange shrink-0" />
-                <span>Jakarta, Indonesia</span>
+                <span>Tasikmalaya, Jawa Barat</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-brand-orange shrink-0" />
@@ -63,7 +63,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-brand-orange shrink-0" />
-                <span>hello@simpluse.com</span>
+                <span>simpluseproject@gmail.com</span>
               </li>
             </ul>
           </div>
