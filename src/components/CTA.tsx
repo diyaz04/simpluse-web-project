@@ -22,7 +22,7 @@ export default function CTA() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a
-              href="https://wa.me/6281234567890"
+              href="https://wa.me/6285950319228"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-10 py-5 rounded-full bg-[#25D366] text-white font-bold text-lg flex items-center justify-center gap-3 hover:scale-105 transition-transform"

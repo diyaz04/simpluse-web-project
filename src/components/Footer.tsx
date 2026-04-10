@@ -7,7 +7,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
             <a href="#home" className="flex items-center gap-2">
-              <Code2 className="w-8 h-8 text-brand-orange" />
+              <img 
+                src="https://lh3.googleusercontent.com/d/15YQcmpQm-deZO0bBEcH302uBZ8GthiYA" 
+                alt="Simpluse Logo" 
+                className="w-12 h-12 object-contain"
+                referrerPolicy="no-referrer"
+              />
               <span className="font-display font-bold text-2xl tracking-tight">
                 Simpluse<span className="text-brand-orange">.</span>
               </span>
@@ -54,7 +59,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-brand-orange shrink-0" />
-                <span>+62 812 3456 7890</span>
+                <span>+62 859 5031 9228</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-brand-orange shrink-0" />

@@ -19,7 +19,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <a href="#home" className="flex items-center gap-2">
-              <Code2 className="w-8 h-8 text-brand-orange" />
+              <img 
+                src="https://lh3.googleusercontent.com/d/15YQcmpQm-deZO0bBEcH302uBZ8GthiYA" 
+                alt="Simpluse Logo" 
+                className="w-10 h-10 object-contain"
+                referrerPolicy="no-referrer"
+              />
               <span className="font-display font-bold text-xl tracking-tight">
                 Simpluse<span className="text-brand-orange">.</span>
               </span>
