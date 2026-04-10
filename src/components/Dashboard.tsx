@@ -14,6 +14,41 @@ export default function Dashboard() {
   useEffect(() => {
     if (content) {
       setFormData(content);
+    } else {
+      // Fallback default data if Firestore is empty
+      setFormData({
+        hero: {
+          title: "Simpluse Web Project",
+          subtitle: "Solusi Website Profesional, Modern, dan Sesuai Kebutuhan Anda. Kami membantu bisnis Anda tumbuh dengan teknologi web terkini."
+        },
+        about: {
+          title: "Membangun Masa Depan Digital dengan Presisi",
+          description: "Simpluse Web Project adalah layanan pembuatan website dan aplikasi berbasis web dengan desain modern dan performa cepat. Kami berfokus pada pengalaman pengguna dan skalabilitas bisnis Anda."
+        },
+        portfolio: [
+          {
+            title: "Khidmah Abadi",
+            description: "Platform layanan masyarakat dengan fitur manajemen kegiatan dan informasi terpadu.",
+            tech: ["Next.js", "Tailwind CSS", "Firebase"],
+            image: "https://picsum.photos/seed/community/800/600",
+            link: "https://khidmah-abadi.vercel.app/",
+          },
+          {
+            title: "CAEM System",
+            description: "Sistem manajemen operasional cerdas untuk efisiensi alur kerja perusahaan.",
+            tech: ["React", "Node.js", "PostgreSQL"],
+            image: "https://picsum.photos/seed/system/800/600",
+            link: "https://caem-system.vercel.app/",
+          },
+          {
+            title: "SIMAK An-Sor Tasik",
+            description: "Sistem Informasi Akademik terintegrasi untuk pengelolaan data pendidikan dan santri.",
+            tech: ["React", "Express", "MongoDB"],
+            image: "https://picsum.photos/seed/school/800/600",
+            link: "https://simakansortasik.vercel.app/",
+          },
+        ]
+      });
     }
   }, [content]);
 

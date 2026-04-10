@@ -29,6 +29,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLoading(false);
     });
 
+    // Safety timeout: if auth doesn't respond in 5 seconds, stop loading
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
     const unsubscribeContent = onSnapshot(
       doc(db, 'content', 'landing'),
       (snapshot) => {
@@ -44,6 +49,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => {
       unsubscribeAuth();
       unsubscribeContent();
+      clearTimeout(timeout);
     };
   }, []);
 
