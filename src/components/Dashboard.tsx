@@ -449,6 +449,16 @@ export default function Dashboard() {
                         className="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:border-brand-orange outline-none"
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm text-text-secondary mb-1">Original Price (optional strikeout)</label>
+                      <input
+                        type="text"
+                        value={plan.originalPrice || ""}
+                        onChange={(e) => updatePricing(i, "originalPrice", e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:border-brand-orange outline-none"
+                        placeholder="e.g. 5M"
+                      />
+                    </div>
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"

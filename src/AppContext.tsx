@@ -22,7 +22,7 @@ interface Content {
   about: { title: string; description: string };
   portfolio: { title: string; description: string; tech: string[]; image: string; link: string }[];
   services: { title: string; description: string; iconName: string }[];
-  pricing: { name: string; price: string; features: string[]; recommended: boolean }[];
+  pricing: { name: string; price: string; originalPrice?: string; features: string[]; recommended: boolean }[];
   testimonials: { name: string; role: string; text: string; avatar: string }[];
   calculator: {
     categories: CalculatorCategory[];

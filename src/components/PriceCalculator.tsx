@@ -210,22 +210,26 @@ export default function PriceCalculator() {
     }
 
     setIsGenerating(true);
-    try {
-      // 1. Silent Firestore save (don't block PDF)
-      try {
-        const customerData = {
-          ...customerInfo,
-          features: totals.items.map(i => i.name),
-          totalPrice: totals.final,
-          discount: totals.discount,
-          createdAt: new Date().toISOString()
-        };
-        await addDoc(collection(db, "inquiries"), customerData);
-      } catch (dbError) {
-        console.warn("Database save failed (likely offline/adblock):", dbError);
-      }
+    
+    // 1. Silent Firestore save (Non-blocking - Fire and Forget)
+    // This makes the PDF generation feel instant instead of waiting for network
+    const customerData = {
+      ...customerInfo,
+      features: totals.items.map(i => i.name),
+      totalPrice: totals.final,
+      discount: totals.discount,
+      createdAt: new Date().toISOString()
+    };
+    
+    addDoc(collection(db, "inquiries"), customerData).catch(err => {
+      console.warn("Analytics tracking failed, but PDF is still generating:", err);
+    });
 
-      // 2. Generate PDF using helper
+    // 2. Immediate PDF Generation
+    try {
+      // Small timeout to allow UI to show loading state before CPU intensive task
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await generatePDF(customerInfo, totals, calculator, formatPrice);
       
       setShowSuccess(true);

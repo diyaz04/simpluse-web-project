@@ -58,9 +58,14 @@ export default function Pricing() {
               )}
               
               <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-              <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-sm text-text-secondary">Rp</span>
-                <span className="text-4xl font-bold">{plan.price}</span>
+              <div className="flex flex-col mb-8">
+                {plan.originalPrice && (
+                  <span className="text-sm text-text-secondary line-through opacity-60">Rp {plan.originalPrice}</span>
+                )}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm text-text-secondary">Rp</span>
+                  <span className="text-4xl font-bold">{plan.price}</span>
+                </div>
               </div>
 
               <ul className="space-y-4 mb-10">
