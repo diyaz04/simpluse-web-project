@@ -3,6 +3,20 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './firebase';
 
+interface CalculatorFeature {
+  id: string;
+  name: string;
+  normalPrice: number;
+  promoPrice: number;
+  iconName: string;
+}
+
+interface CalculatorCategory {
+  id: string;
+  name: string;
+  features: CalculatorFeature[];
+}
+
 interface Content {
   hero: { title: string; subtitle: string };
   about: { title: string; description: string };
@@ -10,6 +24,11 @@ interface Content {
   services: { title: string; description: string; iconName: string }[];
   pricing: { name: string; price: string; features: string[]; recommended: boolean }[];
   testimonials: { name: string; role: string; text: string; avatar: string }[];
+  calculator: {
+    categories: CalculatorCategory[];
+    discountThreshold: number;
+    discountPercentage: number;
+  };
 }
 
 interface AppContextType {

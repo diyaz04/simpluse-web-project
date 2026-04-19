@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import AIEstimator from "./components/AIEstimator";
 import { AppProvider, useApp } from "./AppContext";
 
 function MainContent() {
@@ -36,6 +37,7 @@ function MainContent() {
         <Hero />
         <About />
         <Portfolio />
+        <AIEstimator />
         <Services />
         <Pricing />
         <Testimonials />

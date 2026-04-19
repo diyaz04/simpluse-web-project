@@ -9,6 +9,7 @@ export default function Navbar() {
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Portfolio", href: "#portfolio" },
+    { name: "AI Estimator", href: "#ai-estimator" },
     { name: "Services", href: "#services" },
     { name: "Pricing", href: "#pricing" },
   ];

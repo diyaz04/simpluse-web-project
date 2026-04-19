@@ -24,6 +24,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, write: if isAdmin();
+    }
+
     match /users/{userId} {
       allow read, write: if request.auth.uid == userId || isAdmin();
     }
