@@ -9,43 +9,45 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [showBypass, setShowBypass] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Strict master account restriction
+    if (email !== "admin@simpluse.com" || password !== "admin2026") {
+      setError("Akses Ditolak. Hanya Admin Utama yang diizinkan masuk.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      if (isRegistering) {
-        // Strict restriction for registration
-        if (email !== "adminsimpluse@gmail.com" || password !== "admin2026") {
-          setError("Pendaftaran hanya diizinkan untuk akun admin utama dengan kredensial yang ditentukan.");
-          setLoading(false);
-          return;
-        }
-        const { createUserWithEmailAndPassword } = await import("firebase/auth");
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+      // Attempt login
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err: any) {
       console.error("Auth Error:", err.code, err.message);
-      if (err.code === "auth/network-request-failed") {
-        setError("Koneksi ke Firebase terputus. Ini biasanya karena Ad-blocker atau Firewall di browser Anda.");
+      
+      // If master account doesn't exist yet, create it silently (Auto-Register)
+      if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential") {
+        try {
+          const { createUserWithEmailAndPassword } = await import("firebase/auth");
+          await createUserWithEmailAndPassword(auth, email, password);
+          return; // Success create & login
+        } catch (regErr: any) {
+          // If creation fails (e.g. invalid credential was actually wrong password for existing user)
+          if (err.code === "auth/invalid-credential") {
+             setError("Password salah untuk akun admin ini.");
+          } else {
+             setError("Terjadi kesalahan koneksi. Silakan coba lagi.");
+          }
+        }
+      } else if (err.code === "auth/network-request-failed") {
+        setError("Koneksi ke Firebase terputus. Matikan Ad-blocker jika ada.");
         setShowBypass(true);
-      } else if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
-        setError("Email atau password salah. Silakan periksa kembali.");
-      } else if (err.code === "auth/email-already-in-use") {
-        setError("Email sudah terdaftar. Silakan langsung Login.");
-      } else if (err.code === "auth/weak-password") {
-        setError("Password terlalu lemah. Gunakan minimal 6 karakter.");
-      } else if (err.code === "auth/invalid-email") {
-        setError("Format email tidak valid.");
-      } else if (err.code === "auth/operation-not-allowed") {
-        setError("Metode Login Email/Password belum diaktifkan di Firebase Console.");
       } else {
-        setError(`Terjadi kesalahan: ${err.code || "Unknown error"}. Silakan coba lagi.`);
+        setError(`Terjadi kesalahan: ${err.code || "Unknown error"}.`);
       }
     } finally {
       setLoading(false);
@@ -53,14 +55,16 @@ export default function Login() {
   };
 
   const handleBypass = () => {
-    // This is a temporary bypass for testing if Firebase is unreachable
-    // In a real app, you'd never do this, but for this preview environment it helps
-    if (email === "adminsimpluse@gmail.com" && password === "admin2026") {
-      // We simulate a user object for the context
-      const mockUser = { uid: "bypass-admin", email: "adminsimpluse@gmail.com" } as any;
-      // We can't easily set the auth state globally without Firebase, 
-      // but we can tell the user to try disabling ad-blockers.
-      setError("Bypass diaktifkan (Hanya untuk simulasi). Namun, Dashboard tetap membutuhkan koneksi database agar bisa menyimpan data.");
+    if (email === "admin@simpluse.com" && password === "admin2026") {
+      // Emergency Login: Save info to local storage and force reload
+      // The application will try to use this mock session if Firebase is unreachable
+      localStorage.setItem("simpluse_admin_bypass", JSON.stringify({
+        email: "admin@simpluse.com",
+        timestamp: Date.now()
+      }));
+      window.location.reload(); // Force refresh to trigger session check
+    } else {
+      setError("Kredensial bypass salah.");
     }
   };
 
@@ -72,8 +76,8 @@ export default function Login() {
         className="w-full max-w-md p-10 rounded-3xl glass border border-white/10"
       >
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-display font-bold mb-2">{isRegistering ? "Admin Register" : "Admin Login"}</h1>
-          <p className="text-text-secondary">Simpluse Web Project</p>
+          <h1 className="text-3xl font-display font-bold mb-2">Admin Login</h1>
+          <p className="text-text-secondary">Akses Terbatas - Simpluse Web Project</p>
         </div>
 
         {error && (
@@ -84,7 +88,7 @@ export default function Login() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2 text-text-secondary">Email (Gunakan format email)</label>
+            <label className="block text-sm font-medium mb-2 text-text-secondary">Email Admin</label>
             <div className="relative">
               <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
               <input
@@ -92,7 +96,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-brand-orange transition-colors"
-                placeholder="adminsimpluse@gmail.com"
+                placeholder="admin@simpluse.com"
                 required
               />
             </div>
@@ -118,18 +122,18 @@ export default function Login() {
             disabled={loading}
             className="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {loading ? "Processing..." : (isRegistering ? "Register" : "Login")}
+            {loading ? "Menghubungkan..." : "Masuk ke Dashboard"}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        {showBypass && (
           <button 
-            onClick={() => setIsRegistering(!isRegistering)}
-            className="text-sm text-brand-orange hover:underline"
+            onClick={handleBypass}
+            className="mt-4 w-full text-xs text-white/30 hover:text-white transition-colors"
           >
-            {isRegistering ? "Sudah punya akun? Login di sini" : "Belum punya akun? Register di sini"}
+            Gunakan Bypass (Hanya jika jaringan bermasalah)
           </button>
-        </div>
+        )}
       </motion.div>
     </div>
   );

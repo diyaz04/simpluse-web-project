@@ -6,8 +6,10 @@ import { auth, db, handleFirestoreError, OperationType } from './firebase';
 interface Content {
   hero: { title: string; subtitle: string };
   about: { title: string; description: string };
-  portfolio: any[];
-  services: any[];
+  portfolio: { title: string; description: string; tech: string[]; image: string; link: string }[];
+  services: { title: string; description: string; iconName: string }[];
+  pricing: { name: string; price: string; features: string[]; recommended: boolean }[];
+  testimonials: { name: string; role: string; text: string; avatar: string }[];
 }
 
 interface AppContextType {
@@ -24,8 +26,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [content, setContent] = useState<Content | null>(null);
 
   useEffect(() => {
+    // Check for emergency bypass session
+    const bypassSessionStr = localStorage.getItem("simpluse_admin_bypass");
+    if (bypassSessionStr) {
+      try {
+        const session = JSON.parse(bypassSessionStr);
+        // Valid for 24 hours
+        if (Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+          setUser({ email: session.email, uid: "bypass-admin" } as any);
+        } else {
+          localStorage.removeItem("simpluse_admin_bypass");
+        }
+      } catch (e) {
+        localStorage.removeItem("simpluse_admin_bypass");
+      }
+    }
+
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (user) {
+        setUser(user);
+      }
       setLoading(false);
     });
 
@@ -42,7 +62,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       },
       (error) => {
-        handleFirestoreError(error, OperationType.GET, 'content/landing');
+        console.warn("Firestore snapshot error (likely network/offline):", error.message);
+        // We don't throw here to prevent crashing the app if offline
       }
     );
 

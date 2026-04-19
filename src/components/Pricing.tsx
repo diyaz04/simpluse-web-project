@@ -1,8 +1,11 @@
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
+import { useApp } from "../AppContext";
 
 export default function Pricing() {
-  const plans = [
+  const { content } = useApp();
+  
+  const defaultPlans = [
     {
       name: "Basic Package",
       price: "500K - 1M",
@@ -26,6 +29,8 @@ export default function Pricing() {
     },
   ];
 
+  const plans = content?.pricing || defaultPlans;
+
   return (
     <section id="pricing" className="py-24 bg-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +49,7 @@ export default function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className={`p-10 rounded-3xl glass border ${plan.color} relative ${plan.recommended ? 'scale-105 z-10 gradient-border' : ''}`}
+              className={`p-10 rounded-3xl glass border ${plan.recommended ? 'border-brand-orange/50 scale-105 z-10 gradient-border' : 'border-white/10' } relative`}
             >
               {plan.recommended && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 gradient-bg text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-widest">

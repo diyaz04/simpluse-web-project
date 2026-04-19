@@ -1,8 +1,11 @@
 import { motion } from "motion/react";
 import { Quote } from "lucide-react";
+import { useApp } from "../AppContext";
 
 export default function Testimonials() {
-  const reviews = [
+  const { content } = useApp();
+  
+  const defaultReviews = [
     {
       name: "Budi Santoso",
       role: "CEO of TechCorp",
@@ -22,6 +25,8 @@ export default function Testimonials() {
       avatar: "https://picsum.photos/seed/person3/100/100",
     },
   ];
+
+  const reviews = content?.testimonials || defaultReviews;
 
   return (
     <section className="py-24">

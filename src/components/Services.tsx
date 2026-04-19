@@ -1,39 +1,54 @@
+import React from "react";
 import { motion } from "motion/react";
-import { Layout, School, Rocket, Settings, BarChart3, ShieldCheck } from "lucide-react";
+import { Layout, School, Rocket, Settings, BarChart3, ShieldCheck, HelpCircle } from "lucide-react";
+import { useApp } from "../AppContext";
+
+const iconMap: Record<string, React.ReactNode> = {
+  Layout: <Layout className="w-8 h-8" />,
+  School: <School className="w-8 h-8" />,
+  Rocket: <Rocket className="w-8 h-8" />,
+  Settings: <Settings className="w-8 h-8" />,
+  BarChart3: <BarChart3 className="w-8 h-8" />,
+  ShieldCheck: <ShieldCheck className="w-8 h-8" />,
+};
 
 export default function Services() {
-  const services = [
+  const { content } = useApp();
+  
+  const defaultServices = [
     {
       title: "Company Profile",
       description: "Website representasi bisnis yang elegan dan profesional.",
-      icon: <Layout className="w-8 h-8" />,
+      iconName: "Layout",
     },
     {
       title: "Sekolah & Pesantren",
       description: "Sistem informasi dan portal edukasi modern.",
-      icon: <School className="w-8 h-8" />,
+      iconName: "School",
     },
     {
       title: "Landing Page",
       description: "Halaman promosi dengan konversi tinggi.",
-      icon: <Rocket className="w-8 h-8" />,
+      iconName: "Rocket",
     },
     {
       title: "Custom Web App",
       description: "Aplikasi web sesuai kebutuhan bisnis spesifik.",
-      icon: <Settings className="w-8 h-8" />,
+      iconName: "Settings",
     },
     {
       title: "Dashboard Admin",
       description: "Sistem manajemen data yang intuitif.",
-      icon: <BarChart3 className="w-8 h-8" />,
+      iconName: "BarChart3",
     },
     {
       title: "Maintenance",
       description: "Pemeliharaan rutin dan optimasi performa.",
-      icon: <ShieldCheck className="w-8 h-8" />,
+      iconName: "ShieldCheck",
     },
   ];
+
+  const services = content?.services || defaultServices;
 
   return (
     <section id="services" className="py-24">
@@ -56,7 +71,7 @@ export default function Services() {
               className="p-10 rounded-3xl glass border border-white/10 hover:border-brand-orange/30 transition-all hover:-translate-y-2 group"
             >
               <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-brand-orange/20 group-hover:text-brand-orange transition-colors">
-                {service.icon}
+                {iconMap[service.iconName] || <HelpCircle className="w-8 h-8" />}
               </div>
               <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
               <p className="text-text-secondary leading-relaxed">
